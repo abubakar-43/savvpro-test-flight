@@ -43,16 +43,7 @@ Follow these instructions to participate in the test.
    git push origin user-<your-username>-test
    ```
 
-### 6. **Create a Pull Request (PR)**
-1. Go to the **original repository** where you forked from.
-2. You will see an option to **Create Pull Request** for the branch you just pushed.
-3. Click **New Pull Request**.
-4. Ensure the **base branch** is `main` and the **compare branch** is your own branch (`user-<your-username>-test`).
-5. Add a description if needed, then click **Create Pull Request**.
-
 ---
 
 ### **Important Notes**
-- **No need to merge with `main`**: You **do not** need to merge with the `main` branch in your fork.
-- **Always work on your own branch**: Do not push directly to `main`. Always create and work on a separate branch.
-- **Submit a pull request to the original repository**: After pushing to your own branch, open a pull request to merge your changes into `main` in the original repository.
+- **No submissions will be accepted after the deadline.**
