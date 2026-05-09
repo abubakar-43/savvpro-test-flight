@@ -21,11 +21,6 @@ Follow these instructions to participate in the test.
 
 ### 3. **Read the Task**
 1. Open and read [`TASK.md`](https://github.com/savvpro/savvpro-test-flight/blob/main/TASK.md) carefully before writing any code.
-2. You are building **FlightHub** — a full-stack flight search and booking system.
-3. The required stack is:
-   - **Backend:** Python (FastAPI)
-   - **Frontend:** Node.js (Express)
-4. You **must** use an AI coding agent actively (Claude Code, Cursor, Copilot, etc.) — it is part of the assessment.
 
 ### 4. **Create a New Branch**
 1. Before making any changes, create a new branch using the following naming pattern:
@@ -42,28 +37,10 @@ Follow these instructions to participate in the test.
    ```
 
 ### 5. **Complete the Task**
-Build the full application on your branch. You must deliver the following:
-
-| File / Folder | Description |
-|---|---|
-| `README.md` | Setup instructions and assumptions |
-| `ARCHITECTURE.md` | Data model, API design, ambiguity decisions |
-| `AI_USAGE.md` | AI tool used, key prompts, corrections made |
-| `USER_GUIDE.md` | How to use the app — curl examples or screenshots |
-| `/backend/` | FastAPI app, runnable with `uvicorn` |
-| `/frontend/` | Express app serving an HTML UI |
-| `/tests/` | Minimum 3 tests (at least one testing a business rule) |
-| `.gitignore` | Appropriate entries |
-
-Make **at least 5 meaningful commits** as you go — not one final dump. Use clear commit messages, for example:
-```
-feat: add flight search endpoint
-feat: implement booking cancellation
-fix: handle overbooking edge case
-```
+Build the full application on your branch. 
 
 ### 6. **Push Your Branch**
-1. Stage and commit your final changes:
+1. Commit your final changes:
    ```bash
    git add .
    git commit -m "feat: complete FlightHub assessment"
