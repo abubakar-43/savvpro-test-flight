@@ -1,3 +1,6 @@
 venv
 TASK.md
 frontend/node_modules
+.vincent
+.vscode
+flighthub.db

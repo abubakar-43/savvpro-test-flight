@@ -77,11 +77,12 @@ def list_flights(
     params = []
 
     if origin:
-        query += " AND LOWER(origin) = LOWER(?)"
-        params.append(origin)
+        query += " AND LOWER(origin) LIKE LOWER(?)"
+        params.append(f"%{origin}%")
+
     if destination:
-        query += " AND LOWER(destination) = LOWER(?)"
-        params.append(destination)
+        query += " AND LOWER(destination) LIKE LOWER(?)"
+        params.append(f"%{destination}%")
     if departure_date:
         query += " AND DATE(departure_time) = ?"
         params.append(str(departure_date))
