@@ -4,3 +4,4 @@ frontend/node_modules
 .vincent
 .vscode
 backend/flighthub.db
+.pytest_cache
