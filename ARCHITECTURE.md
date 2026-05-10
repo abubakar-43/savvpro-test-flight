@@ -48,16 +48,7 @@ All responses are JSON. Pydantic models handle input validation; invalid payload
 
 ### 1. "Handle overbooking appropriately"
 
-**Decision:** When a booking is attempted on a flight with 0 available seats, the API returns HTTP `409 Conflict` with:
-
-```json
-{
-  "error": "No seats available on this flight",
-  "alternatives": [ ...up to 3 flights on same route with seats... ]
-}
-```
-
-Alternatives are the flights on the **same origin→destination route** ordered by proximity to the full flight's departure time (`ABS(departure_epoch - full_flight_epoch)`). This gives staff the most useful options — flights closest in time to what the passenger originally wanted.
+When the seats of an AirPlane are full. The booking button will not work to avoid overbooking.
 
 ### 2. "Display relevant flight information"
 

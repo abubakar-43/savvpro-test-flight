@@ -1,6 +1,5 @@
 # FlightHub — User Guide
 
-## UI Walkthrough
 
 Open `http://localhost:3000` in a browser after starting both servers.
 
@@ -19,8 +18,6 @@ Each flight card shows the airline, route, departure time, duration, price, and 
 - 🔴 Red — full
 
 Click **Book** to open the booking modal. Fill in passenger name, passport number, and seat (e.g. `12A`), then click **Confirm Booking**.
-
-If the flight is full, the app shows an error and lists the 3 closest alternative flights with available seats.
 
 ### My Bookings
 
@@ -67,24 +64,6 @@ curl -X POST http://localhost:8000/bookings \
 }
 ```
 
-**Overbook response (409):**
-```json
-{
-  "error": "No seats available on this flight",
-  "alternatives": [
-    {
-      "id": 2,
-      "airline": "BritAir",
-      "origin": "London",
-      "destination": "New York",
-      "departure_time": "2025-08-01 14:00",
-      "seats_available": 3,
-      "price": 285.0
-    }
-  ]
-}
-```
-
 ### View bookings by name
 
 ```bash
@@ -109,18 +88,3 @@ curl -X DELETE http://localhost:8000/bookings/FH-3A7F9B2C
   "message": "Booking FH-3A7F9B2C has been cancelled"
 }
 ```
-
-### Invalid booking (missing passport — returns 422)
-
-```bash
-curl -X POST http://localhost:8000/bookings \
-  -H "Content-Type: application/json" \
-  -d '{
-    "flight_id": 1,
-    "passenger_name": "Jane Doe",
-    "seat": "14C"
-  }'
-# HTTP 422 Unprocessable Entity
-```
-
-All endpoints can be tested directly from the browser without curl.

@@ -43,28 +43,28 @@ def init_db():
     if count == 0:
         flights = [
             # LHR → JFK
-            ("BritAir",  "London",    "New York",    "2025-08-01 08:00", 435, 320.00, 5),
-            ("BritAir",  "London",    "New York",    "2025-08-01 14:00", 440, 285.00, 3),
-            ("BritAir",  "London",    "New York",    "2025-08-02 09:00", 435, 310.00, 8),
+            ("BritAir",  "London",    "New York",    "2026-08-01 08:00", 435, 320.00, 5),
+            ("BritAir",  "London",    "New York",    "2026-08-01 14:00", 440, 285.00, 3),
+            ("BritAir",  "London",    "New York",    "2026-08-02 09:00", 435, 310.00, 8),
             # JFK → LHR
-            ("TransAtl", "New York",  "London",      "2025-08-01 18:00", 420, 298.00, 6),
-            ("TransAtl", "New York",  "London",      "2025-08-02 22:00", 415, 275.00, 4),
+            ("TransAtl", "New York",  "London",      "2026-08-01 18:00", 420, 298.00, 6),
+            ("TransAtl", "New York",  "London",      "2026-08-02 22:00", 415, 275.00, 4),
             # DXB → LHR
-            ("GulfWings","Dubai",     "London",      "2025-08-01 02:00", 415, 410.00, 2),
-            ("GulfWings","Dubai",     "London",      "2025-08-03 10:00", 420, 390.00, 7),
+            ("GulfWings","Dubai",     "London",      "2026-08-01 02:00", 415, 410.00, 2),
+            ("GulfWings","Dubai",     "London",      "2026-08-03 10:00", 420, 390.00, 7),
             # LHR → DXB
-            ("GulfWings","London",    "Dubai",       "2025-08-01 22:00", 410, 395.00, 5),
+            ("GulfWings","London",    "Dubai",       "2026-08-01 22:00", 410, 395.00, 5),
             # KHI → DXB
-            ("PakAir",   "Karachi",   "Dubai",       "2025-08-01 06:00", 150,  95.00, 5),
-            ("PakAir",   "Karachi",   "Dubai",       "2025-08-01 13:00", 150,  85.00, 0),  # full flight for test
-            ("PakAir",   "Karachi",   "Dubai",       "2025-08-01 20:00", 155,  90.00, 3),
+            ("PakAir",   "Karachi",   "Dubai",       "2026-08-01 06:00", 150,  95.00, 5),
+            ("PakAir",   "Karachi",   "Dubai",       "2026-08-01 13:00", 150,  85.00, 0),  # full flight for test
+            ("PakAir",   "Karachi",   "Dubai",       "2026-08-01 20:00", 155,  90.00, 3),
             # LHR → SIN
-            ("SkyLink",  "London",    "Singapore",   "2025-08-05 23:00", 780, 620.00, 10),
+            ("SkyLink",  "London",    "Singapore",   "2026-08-05 23:00", 780, 620.00, 10),
             # SIN → LHR
-            ("SkyLink",  "Singapore", "London",      "2025-08-10 01:00", 800, 610.00, 6),
+            ("SkyLink",  "Singapore", "London",      "2026-08-10 01:00", 800, 610.00, 6),
             # NYC → LAX
-            ("CoastAir", "New York",  "Los Angeles", "2025-08-01 07:30", 330, 180.00, 5),
-            ("CoastAir", "New York",  "Los Angeles", "2025-08-01 15:00", 325, 165.00, 9),
+            ("CoastAir", "New York",  "Los Angeles", "2026-08-01 07:30", 330, 180.00, 5),
+            ("CoastAir", "New York",  "Los Angeles", "2026-08-01 15:00", 325, 165.00, 9),
         ]
         conn.executemany(
             """INSERT INTO flights

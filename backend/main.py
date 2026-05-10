@@ -4,10 +4,22 @@ from pydantic import BaseModel, field_validator
 from typing import Optional
 from datetime import date
 import uuid
+from contextlib import asynccontextmanager
 
 from database import init_db, get_db_connection
 
-app = FastAPI(title="FlightHub API", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()   # startup code
+    yield
+
+
+app = FastAPI(
+    title="FlightHub API",
+    version="1.0.0",
+    lifespan=lifespan
+)
 
 app.add_middleware(
     CORSMiddleware,

@@ -7,14 +7,14 @@ A minimal internal flight search and booking tool for travel agency staff.
 | Layer    | Technology                 |
 |----------|----------------------------|
 | Backend  | Python 3.11.6 · FastAPI · SQLite |
-| Frontend | Node.js 18 · Express · Vanilla JS |
+| Frontend | Node.js v20.20.2 · Express · Vanilla JS |
 
 ---
 
 ## Prerequisites
 
 - Python 3.11.6
-- Node.js 18
+- Node.js v20.20.2
 - pip
 
 ---
@@ -24,7 +24,7 @@ A minimal internal flight search and booking tool for travel agency staff.
 ### 1 — Backend
 
 ```bash
-cd backend
+cd backend (important step to avoid module import path errors)
 pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
