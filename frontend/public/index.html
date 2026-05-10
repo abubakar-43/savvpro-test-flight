@@ -440,7 +440,8 @@
 
     <div class="field">
       <label>Passenger Full Name</label>
-      <input id="m-name" placeholder="e.g. Jane Doe"/>
+      <input id="m-name" placeholder="e.g. Jane Doe" oninput="validateName()"/>
+      <div id="hint-name" style="font-size:11px;color:var(--danger);min-height:14px;margin-top:3px"></div>
     </div>
     <div class="field">
       <label>Passport Number</label>
@@ -448,7 +449,8 @@
     </div>
     <div class="field">
       <label>Seat Number</label>
-      <input id="m-seat" placeholder="e.g. 12A" style="font-family:var(--font-mono)"/>
+      <input id="m-seat" placeholder="e.g. A11" style="font-family:var(--font-mono)" oninput="validateSeat()"/>
+      <div id="hint-seat" style="font-size:11px;color:var(--danger);min-height:14px;margin-top:3px"></div>
     </div>
 
     <div class="modal-actions">
@@ -568,6 +570,33 @@ function flightCardHTML(f) {
 function goToFlights() {
   showPage("flights");
 }
+function validateName() {
+  const inp = document.getElementById("m-name");
+  const hint = document.getElementById("hint-name");
+  const val = inp.value.trim();
+  if (val && !/^[A-Za-z\s\-]+$/.test(val)) {
+    inp.style.borderColor = "var(--danger)";
+    hint.textContent = "Only letters, spaces, and hyphens allowed";
+    return false;
+  }
+  inp.style.borderColor = "";
+  hint.textContent = "";
+  return true;
+}
+
+function validateSeat() {
+  const inp = document.getElementById("m-seat");
+  const hint = document.getElementById("hint-seat");
+  const val = inp.value.trim().toUpperCase();
+  if (val && !/^[A-Z]\d{2}$/.test(val)) {
+    inp.style.borderColor = "var(--danger)";
+    hint.textContent = "Format must be one letter + two digits (e.g. A11)";
+    return false;
+  }
+  inp.style.borderColor = "";
+  hint.textContent = "";
+  return true;
+}
 function openModal(flightId) {
   selectedFlightId = flightId;
   const f = allFlights.find(x => x.id === flightId);
@@ -579,6 +608,10 @@ function openModal(flightId) {
   document.getElementById("m-name").value    = "";
   document.getElementById("m-passport").value = "";
   document.getElementById("m-seat").value    = "";
+  document.getElementById("hint-name").textContent = "";
+  document.getElementById("hint-seat").textContent = "";
+  document.getElementById("m-name").style.borderColor = "";
+  document.getElementById("m-seat").style.borderColor = "";
   document.getElementById("book-modal").classList.add("open");
 }
 
@@ -594,6 +627,12 @@ async function submitBooking() {
 
   if (!name || !passport || !seat) {
     toast("Please fill in all fields.", "error"); return;
+  }
+  if (!validateName()) {
+    toast("Name may only contain letters, spaces, and hyphens.", "error"); return;
+  }
+  if (!/^[A-Za-z]\d{2}$/.test(seat)) {
+    toast("Seat must be one letter followed by two digits (e.g. A11).", "error"); return;
   }
 
   const res = await fetch(`${API}/bookings`, {
