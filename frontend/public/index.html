@@ -763,6 +763,7 @@ async function cancelBooking() {
       ✅ ${data.message}
     </div>`;
     document.getElementById("c-ref").value = "";
+    loadFlights().then(f => { allFlights = f; renderFlights(f); });  // ← add this line
   } else {
     el.innerHTML = `<div class="alert alert-warn">⚠️ ${data.detail || "Cancellation failed"}</div>`;
   }
