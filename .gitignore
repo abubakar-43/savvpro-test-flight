@@ -3,4 +3,4 @@ TASK.md
 frontend/node_modules
 .vincent
 .vscode
-flighthub.db
+backend/flighthub.db

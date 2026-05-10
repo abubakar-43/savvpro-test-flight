@@ -366,7 +366,7 @@
     <div id="bookings-list"></div>
   </div>
 
-  <!-- ── CANCEL PAGE ── -->
+  <!-- ── Booking Confirmed ── -->
   <div class="page" id="page-confirmation">
     <div style="
       max-width:700px;
@@ -428,6 +428,24 @@
         Back to Flights
       </button>
     </div>
+  </div>
+
+  <!-- ── CANCEL PAGE ── -->
+  <div class="page" id="page-cancel">
+    <div class="section-header">
+      <h2>Cancel a Booking</h2>
+      <p>Enter a booking reference to cancel the reservation</p>
+    </div>
+
+    <div class="search-bar" style="max-width:480px">
+      <div class="field">
+        <label>Booking Reference</label>
+        <input id="c-ref" placeholder="FH-XXXXXXXX" style="font-family:var(--font-mono)"/>
+      </div>
+      <button class="btn btn-danger" onclick="cancelBooking()">Cancel Booking</button>
+    </div>
+
+    <div id="cancel-result"></div>
   </div>
 
 </main>
