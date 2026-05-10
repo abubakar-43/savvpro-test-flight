@@ -76,7 +76,7 @@ The following are intentionally left open. Make a decision and document your rea
 | `.gitignore` | Appropriate entries |
 
 ---
-
+5
 ## Git Requirements
 
 - Initialise the repo from scratch — no starter templates

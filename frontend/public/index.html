@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FlightHub — Internal Booking Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:        #0a0c10;
+    --surface:   #111318;
+    --card:      #16191f;
+    --border:    #1e2330;
+    --accent:    #4f8cff;
+    --accent2:   #00d4aa;
+    --warn:      #ff6b35;
+    --text:      #e8eaf0;
+    --muted:     #6b7280;
+    --success:   #22c55e;
+    --danger:    #ef4444;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --r:         10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 58px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-icon { color: var(--accent); font-size: 1.4rem; }
+  nav { display: flex; gap: 2px; flex: 1; }
+  nav button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  nav button:hover { color: var(--text); background: var(--card); }
+  nav button.active { color: var(--accent); background: rgba(79,140,255,.1); }
+
+  /* ── Layout ── */
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .page { display: none; animation: fadeIn .2s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* ── Section header ── */
+  .section-header { margin-bottom: 1.5rem; }
+  .section-header h2 {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+  }
+  .section-header p { color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+  /* ── Search bar ── */
+  .search-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.25rem;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    margin-bottom: 1.5rem;
+  }
+  .field { display: flex; flex-direction: column; gap: 4px; min-width: 140px; flex: 1; }
+  .field label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .5px; text-transform: uppercase; }
+  .field input, .field select {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 8px 10px;
+    outline: none;
+    transition: border-color .15s;
+    width: 100%;
+  }
+  .field input:focus, .field select:focus { border-color: var(--accent); }
+  .field select option { background: var(--card); }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 7px;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #6ba0ff; }
+  .btn-danger  { background: rgba(239,68,68,.15); color: var(--danger); border: 1px solid rgba(239,68,68,.25); }
+  .btn-danger:hover  { background: rgba(239,68,68,.25); }
+  .btn-success { background: rgba(34,197,94,.15); color: var(--success); border: 1px solid rgba(34,197,94,.25); }
+  .btn-ghost   { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+  /* ── Flight cards ── */
+  .flights-grid { display: flex; flex-direction: column; gap: 10px; }
+
+  .flight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.1rem 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+    align-items: center;
+    transition: border-color .15s;
+  }
+  .flight-card:hover { border-color: #2a3040; }
+
+  .flight-route { display: flex; align-items: center; gap: 12px; }
+  .route-city { font-family: var(--font-head); font-weight: 700; font-size: 1.3rem; }
+  .route-arrow { color: var(--muted); font-size: 1rem; }
+  .flight-meta { display: flex; flex-direction: column; gap: 2px; }
+  .meta-row { display: flex; gap: 16px; }
+  .meta-item { display: flex; align-items: center; gap: 5px; color: var(--muted); font-size: 12px; }
+  .meta-item span { color: var(--text); font-size: 12px; }
+  .airline-tag {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    background: rgba(79,140,255,.1);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 4px;
+    width: fit-content;
+    margin-bottom: 6px;
+  }
+
+  .flight-price { text-align: right; }
+  .price-amount { font-family: var(--font-head); font-weight: 700; font-size: 1.35rem; }
+  .price-label { color: var(--muted); font-size: 11px; }
+  .seats-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+  .seats-ok   { background: rgba(34,197,94,.1);  color: var(--success); }
+  .seats-low  { background: rgba(255,107,53,.1); color: var(--warn); }
+  .seats-none { background: rgba(239,68,68,.1);  color: var(--danger); }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 480px;
+    animation: modalIn .2s ease;
+  }
+  @keyframes modalIn { from { opacity: 0; transform: scale(.97) translateY(10px); } to { opacity: 1; transform: none; } }
+  .modal h3 { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+  .modal .subtitle { color: var(--muted); font-size: 12px; margin-bottom: 1.25rem; }
+  .modal .field { margin-bottom: 1rem; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 1.5rem; }
+
+  /* ── Bookings table ── */
+  .booking-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center;
+  }
+  .booking-ref {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+  .booking-status {
+    font-size: 11px;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .status-confirmed { background: rgba(34,197,94,.1); color: var(--success); }
+  .status-cancelled { background: rgba(107,114,128,.1); color: var(--muted); }
+
+  /* ── Toast ── */
+  #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+  .toast {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    max-width: 340px;
+    animation: slideIn .2s ease;
+    border-left: 3px solid var(--accent);
+  }
+  .toast.error { border-left-color: var(--danger); }
+  .toast.success { border-left-color: var(--success); }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+
+  /* ── Empty state ── */
+  .empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .empty-icon { font-size: 2.5rem; margin-bottom: .75rem; }
+
+  /* ── Alert box ── */
+  .alert {
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    margin-bottom: 1rem;
+  }
+  .alert-warn { background: rgba(255,107,53,.08); border: 1px solid rgba(255,107,53,.25); color: var(--warn); }
+  .alt-flights { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .alt-flight-row {
+    background: rgba(255,255,255,.03);
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+  }
+
+  /* ── Divider ── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="logo-icon">✈</span> FlightHub</div>
+  <nav>
+    <button class="active" data-page="flights" onclick="showPage('flights')">Flights</button>
+    <button data-page="bookings" onclick="showPage('bookings')">My Bookings</button>
+    <button data-page="cancel" onclick="showPage('cancel')">Cancel</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ── FLIGHTS PAGE ── -->
+  <div class="page active" id="page-flights">
+    <div class="section-header">
+      <h2>Available Flights</h2>
+      <p>Search and book seats across all available routes</p>
+    </div>
+
+    <div class="search-bar">
+      <div class="field">
+        <label>From</label>
+        <input id="s-origin" placeholder="e.g. London" oninput="searchFlights()"/>
+      </div>
+      <div class="field">
+        <label>To</label>
+        <input id="s-dest" placeholder="e.g. New York" oninput="searchFlights()"/>
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input id="s-date" type="date" onchange="searchFlights()"/>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="clearSearch()">Clear</button>
+    </div>
+
+    <div id="overbook-alert"></div>
+    <div id="flights-list" class="flights-grid"></div>
+  </div>
+
+  <!-- ── BOOKINGS PAGE ── -->
+  <div class="page" id="page-bookings">
+    <div class="section-header">
+      <h2>View Bookings</h2>
+      <p>Look up bookings by passenger name or booking reference</p>
+    </div>
+
+    <div class="search-bar">
+      <div class="field">
+        <label>Passenger Name</label>
+        <input id="b-name" placeholder="Full name"/>
+      </div>
+      <div class="field">
+        <label>Booking Reference</label>
+        <input id="b-ref" placeholder="FH-XXXXXXXX" style="font-family:var(--font-mono)"/>
+      </div>
+      <button class="btn btn-primary" onclick="fetchBookings()">Search</button>
+    </div>
+
+    <div id="bookings-list"></div>
+  </div>
+
+  <!-- ── CANCEL PAGE ── -->
+  <div class="page" id="page-cancel">
+    <div class="section-header">
+      <h2>Cancel a Booking</h2>
+      <p>Enter a booking reference to cancel the reservation</p>
+    </div>
+
+    <div class="search-bar" style="max-width:480px">
+      <div class="field">
+        <label>Booking Reference</label>
+        <input id="c-ref" placeholder="FH-XXXXXXXX" style="font-family:var(--font-mono)"/>
+      </div>
+      <button class="btn btn-danger" onclick="cancelBooking()">Cancel Booking</button>
+    </div>
+
+    <div id="cancel-result"></div>
+  </div>
+
+</main>
+
+<!-- ── BOOKING MODAL ── -->
+<div class="modal-overlay" id="book-modal">
+  <div class="modal">
+    <h3>Book a Seat</h3>
+    <p class="subtitle" id="modal-flight-info">Flight info</p>
+
+    <div class="field">
+      <label>Passenger Full Name</label>
+      <input id="m-name" placeholder="e.g. Jane Doe"/>
+    </div>
+    <div class="field">
+      <label>Passport Number</label>
+      <input id="m-passport" placeholder="e.g. A12345678" style="font-family:var(--font-mono)"/>
+    </div>
+    <div class="field">
+      <label>Seat Number</label>
+      <input id="m-seat" placeholder="e.g. 12A" style="font-family:var(--font-mono)"/>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="submitBooking()">Confirm Booking</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+const API = "http://localhost:8000";
+let selectedFlightId = null;
+let allFlights = [];
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+  document.getElementById("page-" + name).classList.add("active");
+  document.querySelector(`[data-page="${name}"]`).classList.add("active");
+}
+
+// ── Flights ─────────────────────────────────────────────────────────────────
+async function loadFlights(params = {}) {
+  const qs = new URLSearchParams();
+  if (params.origin)         qs.set("origin", params.origin);
+  if (params.destination)    qs.set("destination", params.destination);
+  if (params.departure_date) qs.set("departure_date", params.departure_date);
+
+  const res  = await fetch(`${API}/flights?${qs}`);
+  const data = await res.json();
+  return data.flights || [];
+}
+
+async function searchFlights() {
+  const origin = document.getElementById("s-origin").value.trim();
+  const dest   = document.getElementById("s-dest").value.trim();
+  const date   = document.getElementById("s-date").value;
+  document.getElementById("overbook-alert").innerHTML = "";
+
+  const flights = await loadFlights({
+    origin: origin || undefined,
+    destination: dest || undefined,
+    departure_date: date || undefined,
+  });
+  allFlights = flights;
+  renderFlights(flights);
+}
+
+function clearSearch() {
+  document.getElementById("s-origin").value = "";
+  document.getElementById("s-dest").value   = "";
+  document.getElementById("s-date").value   = "";
+  document.getElementById("overbook-alert").innerHTML = "";
+  loadFlights().then(f => { allFlights = f; renderFlights(f); });
+}
+
+function renderFlights(flights) {
+  const el = document.getElementById("flights-list");
+  if (!flights.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">✈️</div>No flights found for your search.</div>`;
+    return;
+  }
+  el.innerHTML = flights.map(f => flightCardHTML(f)).join("");
+}
+
+function flightCardHTML(f) {
+  const dt = new Date(f.departure_time);
+  const dateStr = dt.toLocaleDateString("en-GB", { day:"numeric", month:"short", year:"numeric" });
+  const timeStr = dt.toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit" });
+  const hrs = Math.floor(f.duration_minutes / 60);
+  const mins = f.duration_minutes % 60;
+  const seatsClass = f.seats_available === 0 ? "seats-none"
+                   : f.seats_available <= 2  ? "seats-low"
+                   : "seats-ok";
+  const seatsText = f.seats_available === 0 ? "Full" : `${f.seats_available} seats`;
+  const bookBtn = f.seats_available > 0
+    ? `<button class="btn btn-primary btn-sm" onclick="openModal(${f.id})">Book</button>`
+    : `<button class="btn btn-ghost btn-sm" disabled style="opacity:.4;cursor:not-allowed">Full</button>`;
+
+  return `
+  <div class="flight-card">
+    <div>
+      <div class="airline-tag">${f.airline}</div>
+      <div class="flight-route">
+        <span class="route-city">${f.origin}</span>
+        <span class="route-arrow">→</span>
+        <span class="route-city">${f.destination}</span>
+      </div>
+      <div class="meta-row" style="margin-top:6px">
+        <div class="meta-item">🗓 <span>${dateStr}</span></div>
+        <div class="meta-item">🕐 <span>${timeStr}</span></div>
+        <div class="meta-item">⏱ <span>${hrs}h ${mins}m</span></div>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div class="price-amount">$${f.price.toFixed(2)}</div>
+      <div class="price-label">per seat</div>
+      <div class="seats-badge ${seatsClass}">${seatsText}</div>
+    </div>
+    <div>${bookBtn}</div>
+  </div>`;
+}
+
+// ── Booking Modal ────────────────────────────────────────────────────────────
+function openModal(flightId) {
+  selectedFlightId = flightId;
+  const f = allFlights.find(x => x.id === flightId);
+  if (f) {
+    const dt = new Date(f.departure_time);
+    document.getElementById("modal-flight-info").textContent =
+      `${f.origin} → ${f.destination} · ${dt.toLocaleString("en-GB")} · $${f.price.toFixed(2)}`;
+  }
+  document.getElementById("m-name").value    = "";
+  document.getElementById("m-passport").value = "";
+  document.getElementById("m-seat").value    = "";
+  document.getElementById("book-modal").classList.add("open");
+}
+
+function closeModal() {
+  document.getElementById("book-modal").classList.remove("open");
+  selectedFlightId = null;
+}
+
+async function submitBooking() {
+  const name     = document.getElementById("m-name").value.trim();
+  const passport = document.getElementById("m-passport").value.trim();
+  const seat     = document.getElementById("m-seat").value.trim();
+
+  if (!name || !passport || !seat) {
+    toast("Please fill in all fields.", "error"); return;
+  }
+
+  const res = await fetch(`${API}/bookings`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ flight_id: selectedFlightId, passenger_name: name, passport_number: passport, seat }),
+  });
+  const data = await res.json();
+
+  if (res.status === 201) {
+    closeModal();
+    toast(`✅ Booking confirmed! Reference: ${data.reference}`, "success");
+    await searchFlights();
+  } else if (res.status === 409 && data.alternatives !== undefined) {
+    closeModal();
+    showOverbookAlert(data.alternatives);
+  } else {
+    toast(data.detail || "Booking failed", "error");
+  }
+}
+
+function showOverbookAlert(alternatives) {
+  let html = `<div class="alert alert-warn">
+    <strong>⚠️ No seats available</strong> on this flight.`;
+
+  if (alternatives.length) {
+    html += `<div style="margin-top:6px;font-size:12px;color:#e8eaf0">Closest available flights:</div>
+    <div class="alt-flights">`;
+    alternatives.forEach(a => {
+      const dt = new Date(a.departure_time);
+      html += `<div class="alt-flight-row">
+        <span>${a.origin} → ${a.destination} · ${dt.toLocaleString("en-GB")}</span>
+        <span style="display:flex;align-items:center;gap:10px">
+          <strong>$${a.price.toFixed(2)}</strong>
+          <span style="color:#22c55e;font-family:var(--font-mono)">${a.seats_available} seats</span>
+          <button class="btn btn-success btn-sm" onclick="openModal(${a.id});document.getElementById('overbook-alert').innerHTML=''">Book</button>
+        </span>
+      </div>`;
+      // Make sure this alternative is in our allFlights array
+      if (!allFlights.find(f => f.id === a.id)) allFlights.push(a);
+    });
+    html += `</div>`;
+  } else {
+    html += `<div style="margin-top:6px;font-size:12px">No alternative flights available for this route.</div>`;
+  }
+
+  html += `</div>`;
+  document.getElementById("overbook-alert").innerHTML = html;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ── View Bookings ────────────────────────────────────────────────────────────
+async function fetchBookings() {
+  const name = document.getElementById("b-name").value.trim();
+  const ref  = document.getElementById("b-ref").value.trim();
+
+  if (!name && !ref) { toast("Enter a name or reference", "error"); return; }
+
+  const qs = new URLSearchParams();
+  if (name) qs.set("name", name);
+  if (ref)  qs.set("reference", ref);
+
+  const res  = await fetch(`${API}/bookings?${qs}`);
+  const data = await res.json();
+  const el   = document.getElementById("bookings-list");
+
+  const bookings = data.bookings || [];
+  if (!bookings.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div>No bookings found.</div>`;
+    return;
+  }
+
+  el.innerHTML = bookings.map(b => {
+    const dt = new Date(b.departure_time);
+    const statusClass = b.status === "confirmed" ? "status-confirmed" : "status-cancelled";
+    return `
+    <div class="booking-card">
+      <div>
+        <div class="booking-ref">${b.reference}</div>
+        <div style="margin-top:4px;font-size:13px;font-weight:500">${b.passenger_name}</div>
+        <div style="color:var(--muted);font-size:12px">Seat <span style="font-family:var(--font-mono);color:var(--text)">${b.seat}</span></div>
+      </div>
+      <div>
+        <div style="font-weight:600">${b.origin} → ${b.destination}</div>
+        <div style="color:var(--muted);font-size:12px">${dt.toLocaleString("en-GB")} · ${b.airline}</div>
+      </div>
+      <div style="text-align:right">
+        <span class="booking-status ${statusClass}">${b.status}</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ── Cancel Booking ───────────────────────────────────────────────────────────
+async function cancelBooking() {
+  const ref = document.getElementById("c-ref").value.trim();
+  if (!ref) { toast("Enter a booking reference", "error"); return; }
+
+  const res  = await fetch(`${API}/bookings/${encodeURIComponent(ref)}`, { method: "DELETE" });
+  const data = await res.json();
+  const el   = document.getElementById("cancel-result");
+
+  if (res.ok) {
+    el.innerHTML = `<div class="alert" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);color:var(--success)">
+      ✅ ${data.message}
+    </div>`;
+    document.getElementById("c-ref").value = "";
+  } else {
+    el.innerHTML = `<div class="alert alert-warn">⚠️ ${data.detail || "Cancellation failed"}</div>`;
+  }
+}
+
+// ── Toast ────────────────────────────────────────────────────────────────────
+function toast(msg, type = "info") {
+  const t = document.createElement("div");
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.getElementById("toast-container").appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+window.addEventListener("click", e => {
+  if (e.target === document.getElementById("book-modal")) closeModal();
+});
+
+loadFlights().then(f => { allFlights = f; renderFlights(f); });
+</script>
+</body>
+</html>
