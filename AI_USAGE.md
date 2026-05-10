@@ -5,11 +5,11 @@
 **Claude Sonnet 4.6** and **ChatGPT**
 
 
-1. **Initial scaffold**  
+## 1. **Initial scaffold**  
 The AI was given the full specification with 5 defined tests and it produced all code, tests, and documentation files iteratively, fixing issues as they arose.
 
 
-2. Partial Search Matching for Flights
+## 2. Partial Search Matching for Flights
 Enhanced the flight search functionality so that users no longer need to enter the complete city name in the `FROM` field.
 The search now supports partial and substring matching.
 ### Example
@@ -17,7 +17,7 @@ The search now supports partial and substring matching.
 - Result: Flights from `New York` are displayed.
 
 
-3. Booking Confirmation Page
+## 3. Booking Confirmation Page
 Implemented a booking confirmation page that appears immediately after a successful seat booking.
 ### Features
 - Displays a booking success message.
@@ -25,7 +25,7 @@ Implemented a booking confirmation page that appears immediately after a success
 - Improves user feedback and booking transparency.
 
 
-4. Instant Seat Availability Updates After Cancellation
+## 4. Instant Seat Availability Updates After Cancellation
 Fixed the issue where cancelled tickets were not immediately reflected on the flights page unless the page was manually reloaded.
 ### Improvement
 - Flight seat availability now updates instantly after a ticket cancellation.
@@ -33,7 +33,7 @@ Fixed the issue where cancelled tickets were not immediately reflected on the fl
 - Improved synchronization between booking and flight listing views.
 
 
-5. Input Validation Enhancements
+## 5. Input Validation Enhancements
 ### Name Field Validation
 Added validation to ensure that the passenger name field only accepts:
 - Alphabets (`A-Z`, `a-z`)

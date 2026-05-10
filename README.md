@@ -55,6 +55,7 @@ The UI will be available at `http://localhost:3000`.
 From the `backend/` directory:
 
 ```bash
+set PYTHONPATH=C:\Users\haier\Desktop\savvpro-test-flight\backend
 pytest ../tests/test_flighthub.py -v
 ```
 
