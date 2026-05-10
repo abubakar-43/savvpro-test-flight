@@ -367,21 +367,67 @@
   </div>
 
   <!-- ── CANCEL PAGE ── -->
-  <div class="page" id="page-cancel">
-    <div class="section-header">
-      <h2>Cancel a Booking</h2>
-      <p>Enter a booking reference to cancel the reservation</p>
-    </div>
+  <div class="page" id="page-confirmation">
+    <div style="
+      max-width:700px;
+      margin:40px auto;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:3rem;
+      text-align:center;
+    ">
+      
+      <div style="font-size:4rem;margin-bottom:1rem">✅</div>
 
-    <div class="search-bar" style="max-width:480px">
-      <div class="field">
-        <label>Booking Reference</label>
-        <input id="c-ref" placeholder="FH-XXXXXXXX" style="font-family:var(--font-mono)"/>
+      <h2 style="
+        font-family:var(--font-head);
+        font-size:2rem;
+        margin-bottom:.5rem;
+      ">
+        Booking Confirmed
+      </h2>
+
+      <p style="
+        color:var(--muted);
+        margin-bottom:2rem;
+        font-size:15px;
+      ">
+        Your seat has been successfully reserved.
+      </p>
+
+      <div style="
+        background:var(--card);
+        border:1px solid var(--border);
+        border-radius:12px;
+        padding:1.5rem;
+        margin-bottom:2rem;
+      ">
+        <div style="
+          font-size:12px;
+          color:var(--muted);
+          margin-bottom:6px;
+          text-transform:uppercase;
+          letter-spacing:1px;
+        ">
+          Booking Reference
+        </div>
+
+        <div id="confirmation-reference" style="
+          font-family:var(--font-mono);
+          font-size:2rem;
+          color:var(--accent);
+          font-weight:500;
+          letter-spacing:2px;
+        ">
+          FH-XXXXXXXX
+        </div>
       </div>
-      <button class="btn btn-danger" onclick="cancelBooking()">Cancel Booking</button>
-    </div>
 
-    <div id="cancel-result"></div>
+      <button class="btn btn-primary" onclick="goToFlights()">
+        Back to Flights
+      </button>
+    </div>
   </div>
 
 </main>
@@ -422,9 +468,18 @@ let allFlights = [];
 // ── Navigation ─────────────────────────────────────────────────────────────
 function showPage(name) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
-  document.getElementById("page-" + name).classList.add("active");
-  document.querySelector(`[data-page="${name}"]`).classList.add("active");
+
+  document.querySelectorAll("nav button")
+    .forEach(b => b.classList.remove("active"));
+
+  document.getElementById("page-" + name)
+    .classList.add("active");
+
+  const navBtn = document.querySelector(`[data-page="${name}"]`);
+
+  if (navBtn) {
+    navBtn.classList.add("active");
+  }
 }
 
 // ── Flights ─────────────────────────────────────────────────────────────────
@@ -510,6 +565,9 @@ function flightCardHTML(f) {
 }
 
 // ── Booking Modal ────────────────────────────────────────────────────────────
+function goToFlights() {
+  showPage("flights");
+}
 function openModal(flightId) {
   selectedFlightId = flightId;
   const f = allFlights.find(x => x.id === flightId);
@@ -547,7 +605,12 @@ async function submitBooking() {
 
   if (res.status === 201) {
     closeModal();
-    toast(`✅ Booking confirmed! Reference: ${data.reference}`, "success");
+
+    document.getElementById("confirmation-reference").textContent =
+      data.reference;
+
+    showPage("confirmation");
+
     await searchFlights();
   } else if (res.status === 409 && data.alternatives !== undefined) {
     closeModal();
